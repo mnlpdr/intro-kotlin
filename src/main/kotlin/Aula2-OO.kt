@@ -60,10 +60,10 @@ fun main() {
                 repositorioAnimal.animais.forEach(Animal::emitirSom)
                 repositorioAnimal.animais.forEach { it.emitirSom()}
             }
-//            7 -> {
-//                println("Digite o nome do animal a ser removido:")
-//                repositorioAnimal.remover(readln().uppercase())
-//            }
+            7 -> {
+                println("Digite o nome do animal a ser removido:")
+                repositorioAnimal.remover(readln().uppercase())
+            }
             8 -> {
                 println("Digite a cor dos animais que você deseja listar:")
                 val cor = readlnOrNull()?.uppercase()?.let {Cores.valueOf(it)}
@@ -71,14 +71,29 @@ fun main() {
 
             }
             9 -> {
-                println("Digite a idade dos animais que você deseja listar:")
+                println("Digite a idade dos animais que você deseja listar: ")
                 val idade = readlnOrNull()?.toIntOrNull()
                 idade?.let { repositorioAnimal.listarPorIdade(it) }
             }
+            10 -> {
+                println("Digite o nome do animal que você quer buscar: ")
+                nome = readlnOrNull()?.uppercase() ?: ""
+                val animalBuscado = repositorioAnimal.buscarPorNome(nome)
+                if (animalBuscado != null){
+                    println("O animal $nome foi encontrado")
+                }
+                else{
+                    println("O animal $nome não foi encontrado")
+
+                }
+
+            }
+
+            }
         }
 
-    }
 }
+
 
 abstract class Animal(var idade: Int, val cor: Cores) {
     open var nome: String = ""
@@ -165,10 +180,27 @@ class RepositorioAnimal {
         animais.forEach { println(it.nome) }
     }
 
-
-    private fun buscarPorNome(nome: String): Animal? {
-        return animais.find {it.nome == nome}
+    fun remover(nome: String) {
+        val index = this.getIndexNome(nome)
+        this.animais.removeAt(index)
     }
+    fun getIndexNome(nome: String): Int{
+        val index = this.animais.indexOfFirst {  it.nome.equals(nome, ignoreCase = true)}
+        if (index == -1){
+            throw IllegalArgumentException("Não foi encontrado um animal com esse nome.")
+        }
+        return index
+    }
+
+    fun buscarPorNome(nome: String): Animal? {
+       val index = this.animais.indexOfFirst { it.nome.equals(nome, ignoreCase = true) }
+       val animal = if (index != -1) this.animais[index] else null;
+       return animal
+
+
+    }
+
+
 
     fun listarPorCor(cor: Cores) {
         val animaisPorCor = animais.filter { it.cor == cor }
